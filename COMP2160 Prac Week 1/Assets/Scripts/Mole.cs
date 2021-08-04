@@ -6,32 +6,53 @@ using UnityEngine;
 public class Mole : MonoBehaviour
 {
     private SpriteRenderer sprite;
-    public Color circleColor;
-    public Color circleColorChange;
+    public Color upColor;
+    public Color downColor;
+    public Color missedColor;
     public float timer;
+    public float ranTime;
     private float privateTimer;
+    private float missTimer;
 
     // Start is called before the first frame update
     void Start()
     {
         sprite = GetComponent<SpriteRenderer>();
-        sprite.color = circleColor;
+        sprite.color = downColor;
         privateTimer = timer;
+        missTimer = timer;
+        ranTime = Random.Range(1, 5);
     }
 
     void OnMouseDown()
     {
-        privateTimer = timer;
-        sprite.color = circleColorChange;
+        if (sprite.color == upColor)
+        {
+            sprite.color = downColor;
+            ranTime = Random.Range(1, 5);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        privateTimer -= Time.deltaTime;
-        if (privateTimer <= 0)
+        ranTime -= Time.deltaTime;
+        if (ranTime < 0)
         {
-            sprite.color = circleColor;
+            sprite.color = upColor;
+            privateTimer -= Time.deltaTime;
+            if (privateTimer < 0)
+            {
+                sprite.color = missedColor;
+                missTimer -= Time.deltaTime;
+                if (missTimer < 0)
+                {
+                    ranTime = Random.Range(1, 5);
+                    privateTimer = timer;
+                    missTimer = timer;
+                    sprite.color = downColor;
+                }
+            }
         }
     }
 }
